@@ -2,6 +2,7 @@
   "name": "backend",
   "version": "1.0.0",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server/server.js",
     "server": "nodemon server/server.js",
@@ -23,6 +24,7 @@
     "gravatar": "^1.8.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.4",
+    "normalize-url": "^8.0.1",
     "request": "^2.88.2"
   },
   "devDependencies": {

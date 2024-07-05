@@ -1,7 +1,7 @@
-const { check } = require("express-validator");
-const validatorMiddleware = require("../../middlewares/validatorMiddleware");
+import { check } from "express-validator";
+import validatorMiddleware from "../../middlewares/validatorMiddleware.js";
 
-exports.signUpValidator = [
+const signUpValidator = [
   check("name", "Name is required").not().isEmpty(),
   check("email", "Please include a valid email").isEmail(),
   check("password", "Password must be at least 6 characters long").isLength({
@@ -10,10 +10,12 @@ exports.signUpValidator = [
   validatorMiddleware,
 ];
 
-exports.loginValidator = [
+const loginValidator = [
   check("email", "Please include a valid email").isEmail(),
   check("password", "Password must be at least 6 characters long").isLength({
     min: 6,
   }),
   validatorMiddleware,
 ];
+
+export { signUpValidator, loginValidator };

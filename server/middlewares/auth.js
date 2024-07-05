@@ -1,6 +1,7 @@
-const jwt = require("jsonwebtoken");
+import asyncHandler from "express-async-handler";
+import jwt from "jsonwebtoken";
 
-module.exports = function (req, res, next) {
+const auth = asyncHandler(async (req, res, next) => {
   // Get token from header
   const token = req.header("x-auth-token");
 
@@ -17,4 +18,6 @@ module.exports = function (req, res, next) {
   } catch (error) {
     res.status(401).json({ msg: "Token is not valid" });
   }
-};
+});
+
+export default auth;
