@@ -4,6 +4,7 @@ import {
   createOrUpdateUserProfile,
   getAllProfiles,
   getProfileByID,
+  deleteProfile,
 } from "../controllers/profileController.js";
 import auth from "../middlewares/auth.js";
 import {
@@ -22,5 +23,6 @@ router.post(
   createOrUpdateProfileValidator,
   createOrUpdateUserProfile
 );
+router.delete("/", auth, deleteProfile);
 
 export default router;

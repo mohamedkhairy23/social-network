@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Profile from "../models/profileModel.js";
+import User from "../models/userModel.js";
 import normalizeUrl from "normalize-url";
 
 // @desc     GET Logged In User Profile
@@ -124,7 +125,7 @@ const getAllProfiles = asyncHandler(async (req, res) => {
 });
 
 // @desc     GET profile by user ID
-// @route    GET /api/profile/user/user_id
+// @route    GET /api/profile/user/:user_id
 // @access   Public
 const getProfileByID = asyncHandler(async (req, res) => {
   try {
@@ -146,9 +147,28 @@ const getProfileByID = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc     DELETE profile, user & posts
+// @route    DELETE /api/profile
+// @access   Private
+const deleteProfile = asyncHandler(async (req, res) => {
+  try {
+    await Profile.findOneAndDelete({ user: req.user.id });
+    await User.findOneAndDelete({ _id: req.user.id });
+
+    res.status(200).json({ msg: "User deleted" });
+  } catch (error) {
+    console.log(error);
+    if (error.kind === "ObjectId") {
+      return res.status(400).json({ msg: "Profile Not Found" });
+    }
+    return res.status(500).send("Server Error");
+  }
+});
+
 export {
   getLoggedInUserProfile,
   createOrUpdateUserProfile,
   getAllProfiles,
   getProfileByID,
+  deleteProfile,
 };
