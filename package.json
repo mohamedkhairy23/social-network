@@ -19,6 +19,7 @@
     "config": "^3.3.12",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "express-async-handler": "^1.2.0",
     "express-validator": "^7.1.0",
     "gravatar": "^1.8.2",
     "jsonwebtoken": "^9.0.2",
