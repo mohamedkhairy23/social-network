@@ -9,7 +9,7 @@ const getLoggedInUserProfile = asyncHandler(async (req, res) => {
   try {
     const profile = await Profile.findOne({ user: req.user.id }).populate(
       "user",
-      ["name avatar"]
+      "name avatar"
     );
 
     if (!profile) {
