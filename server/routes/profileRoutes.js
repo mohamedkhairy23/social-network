@@ -5,10 +5,14 @@ import {
   getAllProfiles,
   getProfileByID,
   deleteProfile,
+  addProfileExperience,
+  deleteProfileExperience,
 } from "../controllers/profileController.js";
 import auth from "../middlewares/auth.js";
 import {
+  addProfileExperienceValidator,
   createOrUpdateProfileValidator,
+  deleteProfileExperienceValidator,
   getProfileByUserIDValidator,
 } from "../utils/validators/profileValidator.js";
 
@@ -24,5 +28,16 @@ router.post(
   createOrUpdateUserProfile
 );
 router.delete("/", auth, deleteProfile);
-
+router.put(
+  "/experience",
+  auth,
+  addProfileExperienceValidator,
+  addProfileExperience
+);
+router.delete(
+  "/experience/:exp_id",
+  auth,
+  deleteProfileExperienceValidator,
+  deleteProfileExperience
+);
 export default router;

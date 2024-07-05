@@ -165,10 +165,62 @@ const deleteProfile = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc     PUT Add Profile Experience
+// @route    PUT /api/profile/experience
+// @access   Private
+const addProfileExperience = asyncHandler(async (req, res) => {
+  try {
+    const { title, company, location, from, to, current, description } =
+      req.body;
+
+    const newExperience = {
+      title,
+      company,
+      location,
+      from,
+      to,
+      current,
+      description,
+    };
+
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    profile.experience.unshift(newExperience);
+
+    await profile.save();
+
+    res.status(200).json(profile);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Server Error");
+  }
+});
+
+// @desc     DElETE Delete Profile Experience
+// @route    DElETE /api/profile/experience/:exp_id
+// @access   Private
+const deleteProfileExperience = asyncHandler(async (req, res) => {
+  try {
+    const foundProfile = await Profile.findOne({ user: req.user.id });
+
+    foundProfile.experience = foundProfile.experience.filter(
+      (exp) => exp._id.toString() !== req.params.exp_id
+    );
+
+    await foundProfile.save();
+    return res.status(200).json(foundProfile);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ msg: "Server error" });
+  }
+});
+
 export {
   getLoggedInUserProfile,
   createOrUpdateUserProfile,
   getAllProfiles,
   getProfileByID,
   deleteProfile,
+  addProfileExperience,
+  deleteProfileExperience,
 };
