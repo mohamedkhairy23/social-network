@@ -82,8 +82,41 @@ const createOrUpdateUserProfile = asyncHandler(async (req, res) => {
 // @access   Public
 const getAllProfiles = asyncHandler(async (req, res) => {
   try {
-    const profiles = await Profile.find().populate("user", "name avatar");
-    res.status(200).json(profiles);
+    const searchQuery = req.query.search || "";
+    const page = parseInt(req.query.page) || 1;
+
+    let query = {};
+
+    if (searchQuery) {
+      const searchRegex = new RegExp(searchQuery, "i");
+      query["$or"] = [
+        { githubusername: searchRegex },
+        { bio: searchRegex },
+        { status: searchRegex },
+      ];
+    }
+
+    const pageSize = 10;
+    const skip = (page - 1) * pageSize;
+
+    const profiles = await Profile.find(query)
+      .populate("user", "name avatar")
+      .skip(skip)
+      .limit(pageSize)
+      .lean();
+
+    const total = await Profile.countDocuments(query);
+
+    const response = {
+      pagination: {
+        total,
+        page,
+        pages: Math.ceil(total / pageSize),
+      },
+      data: profiles,
+    };
+
+    res.status(200).json(response);
   } catch (error) {
     console.log(error);
     return res.status(500).send("Server Error");
