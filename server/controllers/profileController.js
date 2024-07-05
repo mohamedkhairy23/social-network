@@ -77,4 +77,45 @@ const createOrUpdateUserProfile = asyncHandler(async (req, res) => {
   }
 });
 
-export { getLoggedInUserProfile, createOrUpdateUserProfile };
+// @desc     GET all profiles
+// @route    GET /api/profile
+// @access   Public
+const getAllProfiles = asyncHandler(async (req, res) => {
+  try {
+    const profiles = await Profile.find().populate("user", "name avatar");
+    res.status(200).json(profiles);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Server Error");
+  }
+});
+
+// @desc     GET profile by user ID
+// @route    GET /api/profile/user/user_id
+// @access   Public
+const getProfileByID = asyncHandler(async (req, res) => {
+  try {
+    const profile = await Profile.findOne({
+      user: req.params.user_id,
+    }).populate("user", "name avatar");
+
+    if (!profile) {
+      return res.status(400).json({ msg: "Profile Not Found" });
+    }
+
+    res.status(200).json(profile);
+  } catch (error) {
+    console.log(error);
+    if (error.kind === "ObjectId") {
+      return res.status(400).json({ msg: "Profile Not Found" });
+    }
+    return res.status(500).send("Server Error");
+  }
+});
+
+export {
+  getLoggedInUserProfile,
+  createOrUpdateUserProfile,
+  getAllProfiles,
+  getProfileByID,
+};

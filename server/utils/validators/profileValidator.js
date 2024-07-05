@@ -1,10 +1,15 @@
 import { check } from "express-validator";
 import validatorMiddleware from "../../middlewares/validatorMiddleware.js";
 
+const getProfileByUserIDValidator = [
+  check("user_id").isMongoId().withMessage("Invalid user id format"),
+  validatorMiddleware,
+];
+
 const createOrUpdateProfileValidator = [
   check("status", "Status is required").not().isEmpty(),
   check("skills", "Skills are required").not().isEmpty(),
   validatorMiddleware,
 ];
 
-export { createOrUpdateProfileValidator };
+export { createOrUpdateProfileValidator, getProfileByUserIDValidator };
