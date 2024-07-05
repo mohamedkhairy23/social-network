@@ -215,6 +215,56 @@ const deleteProfileExperience = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc     PUT Add Profile Education
+// @route    PUT /api/profile/education
+// @access   Private
+const addProfileEducation = asyncHandler(async (req, res) => {
+  try {
+    const { school, degree, fieldofstudy, from, to, current, description } =
+      req.body;
+
+    const newExperience = {
+      school,
+      degree,
+      fieldofstudy,
+      from,
+      to,
+      current,
+      description,
+    };
+
+    const profile = await Profile.findOne({ user: req.user.id });
+
+    profile.education.unshift(newExperience);
+
+    await profile.save();
+
+    res.status(200).json(profile);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Server Error");
+  }
+});
+
+// @desc     DElETE Delete Profile Education
+// @route    DElETE /api/profile/education/:edu_id
+// @access   Private
+const deleteProfileEducation = asyncHandler(async (req, res) => {
+  try {
+    const foundProfile = await Profile.findOne({ user: req.user.id });
+
+    foundProfile.education = foundProfile.education.filter(
+      (exp) => exp._id.toString() !== req.params.edu_id
+    );
+
+    await foundProfile.save();
+    return res.status(200).json(foundProfile);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ msg: "Server error" });
+  }
+});
+
 export {
   getLoggedInUserProfile,
   createOrUpdateUserProfile,
@@ -223,4 +273,6 @@ export {
   deleteProfile,
   addProfileExperience,
   deleteProfileExperience,
+  addProfileEducation,
+  deleteProfileEducation,
 };

@@ -7,11 +7,15 @@ import {
   deleteProfile,
   addProfileExperience,
   deleteProfileExperience,
+  addProfileEducation,
+  deleteProfileEducation,
 } from "../controllers/profileController.js";
 import auth from "../middlewares/auth.js";
 import {
+  addProfileEducationValidator,
   addProfileExperienceValidator,
   createOrUpdateProfileValidator,
+  deleteProfileEducationValidator,
   deleteProfileExperienceValidator,
   getProfileByUserIDValidator,
 } from "../utils/validators/profileValidator.js";
@@ -40,4 +44,17 @@ router.delete(
   deleteProfileExperienceValidator,
   deleteProfileExperience
 );
+router.put(
+  "/education",
+  auth,
+  addProfileEducationValidator,
+  addProfileEducation
+);
+router.delete(
+  "/education/:edu_id",
+  auth,
+  deleteProfileEducationValidator,
+  deleteProfileEducation
+);
+
 export default router;
