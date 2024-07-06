@@ -3,7 +3,6 @@ import Profile from "../models/profileModel.js";
 import User from "../models/userModel.js";
 import normalizeUrl from "normalize-url";
 import request from "request";
-import { response } from "express";
 
 // @desc     GET Logged In User Profile
 // @route    GET /api/profile/me
