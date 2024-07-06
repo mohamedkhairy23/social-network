@@ -2,6 +2,8 @@ import asyncHandler from "express-async-handler";
 import Profile from "../models/profileModel.js";
 import User from "../models/userModel.js";
 import normalizeUrl from "normalize-url";
+import request from "request";
+import { response } from "express";
 
 // @desc     GET Logged In User Profile
 // @route    GET /api/profile/me
@@ -265,6 +267,31 @@ const deleteProfileEducation = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc     GET user repos from github
+// @route    GET /api/profile/github/:username
+// @access   Private
+const GetUserReposByUsername = asyncHandler(async (req, res) => {
+  try {
+    const options = {
+      uri: `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc&client_id=${process.env.GITHUB_CLIENT_ID}&client_secret=${process.env.GITHUB_CLIENT_SECRET}`,
+      method: "GET",
+      headers: { "user-agent": "node.js" },
+    };
+
+    request(options, (error, response, body) => {
+      if (error) console.log(error);
+
+      if (response.statusCode !== 200) {
+        res.status(404).json({ msg: "No Github Profile Found" });
+      }
+      res.status(200).json(JSON.parse(body));
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ msg: "Server error" });
+  }
+});
+
 export {
   getLoggedInUserProfile,
   createOrUpdateUserProfile,
@@ -275,4 +302,5 @@ export {
   deleteProfileExperience,
   addProfileEducation,
   deleteProfileEducation,
+  GetUserReposByUsername,
 };
