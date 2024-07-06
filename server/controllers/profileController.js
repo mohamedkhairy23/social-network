@@ -1,6 +1,7 @@
 import asyncHandler from "express-async-handler";
 import Profile from "../models/profileModel.js";
 import User from "../models/userModel.js";
+import Post from "../models/postModel.js";
 import normalizeUrl from "normalize-url";
 import request from "request";
 
@@ -154,6 +155,7 @@ const getProfileByID = asyncHandler(async (req, res) => {
 const deleteProfile = asyncHandler(async (req, res) => {
   try {
     await Profile.findOneAndDelete({ user: req.user.id });
+    await Post.findOneAndDelete({ user: req.user.id });
     await User.findOneAndDelete({ _id: req.user.id });
 
     res.status(200).json({ msg: "User deleted" });

@@ -1,12 +1,7 @@
 import { check } from "express-validator";
 import validatorMiddleware from "../../middlewares/validatorMiddleware.js";
 
-const getPostByIDValidator = [
-  check("id").isMongoId().withMessage("Invalid user id format"),
-  validatorMiddleware,
-];
-
-const deletePostByIDValidator = [
+const checkObjectIDValidator = [
   check("id").isMongoId().withMessage("Invalid user id format"),
   validatorMiddleware,
 ];
@@ -16,4 +11,4 @@ const createPostValidator = [
   validatorMiddleware,
 ];
 
-export { createPostValidator, getPostByIDValidator, deletePostByIDValidator };
+export { createPostValidator, checkObjectIDValidator };
