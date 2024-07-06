@@ -48,6 +48,7 @@ const getPosts = asyncHandler(async (req, res) => {
       .populate("user", "name avatar")
       .skip(skip)
       .limit(pageSize)
+      .sort({ date: -1 })
       .lean();
 
     const total = await Post.countDocuments(query);
@@ -68,4 +69,53 @@ const getPosts = asyncHandler(async (req, res) => {
   }
 });
 
-export { createPost, getPosts };
+// @desc     GET get post by ID
+// @route    GET /api/posts/:id
+// @access   Private
+const getPostByID = asyncHandler(async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({ msg: "Post with that id not found" });
+    }
+
+    res.status(200).json(post);
+  } catch (error) {
+    console.log(error);
+    if (error.kind === "ObjectId") {
+      return res.status(404).json({ msg: "Post with that id not found" });
+    }
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+// @desc     DELETE delete post by ID
+// @route    DELETE /api/posts/:id
+// @access   Private
+const deletePostByID = asyncHandler(async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    if (!post) {
+      return res.status(404).json({ msg: "Post with that id not found" });
+    }
+
+    // Check if post owner is logged in
+    if (post.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: "User not authorized" });
+    }
+
+    await post.deleteOne();
+
+    res.status(200).json({ msg: "Post Removed" });
+  } catch (error) {
+    console.log(error);
+    if (error.kind === "ObjectId") {
+      return res.status(404).json({ msg: "Post with that id not found" });
+    }
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+export { createPost, getPosts, getPostByID, deletePostByID };
