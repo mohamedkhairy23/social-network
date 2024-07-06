@@ -118,17 +118,15 @@ const deletePostByID = asyncHandler(async (req, res) => {
   }
 });
 
-// @desc     PUT Like a post
+// @desc     PUT Like a post by post ID
 // @route    DELETE /api/posts/like/:id
 // @access   Private
 const likePost = asyncHandler(async (req, res) => {
   try {
     const post = await Post.findById(req.params.id);
 
-    if (
-      post.likes.filter((like) => like.user.toString() === req.user.id).length >
-      0
-    ) {
+    // Check if the post has already been liked
+    if (post.likes.some((like) => like.user.toString() === req.user.id)) {
       return res.status(400).json({ msg: "Post already liked" });
     }
 
@@ -143,4 +141,36 @@ const likePost = asyncHandler(async (req, res) => {
   }
 });
 
-export { createPost, getPosts, getPostByID, deletePostByID, likePost };
+// @desc     PUT UnLike a post by post ID
+// @route    DELETE /api/posts/like/:id
+// @access   Private
+const unlikePost = asyncHandler(async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    // Check if the post has not yet been liked
+    if (!post.likes.some((like) => like.user.toString() === req.user.id)) {
+      return res.status(400).json({ msg: "Post has not yet been liked" });
+    }
+
+    // remove the like
+    post.likes = post.likes.filter(
+      ({ user }) => user.toString() !== req.user.id
+    );
+    await post.save();
+
+    res.status(200).json(post.likes);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+export {
+  createPost,
+  getPosts,
+  getPostByID,
+  deletePostByID,
+  likePost,
+  unlikePost,
+};

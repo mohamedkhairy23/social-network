@@ -10,6 +10,7 @@ import {
   getPostByID,
   getPosts,
   likePost,
+  unlikePost,
 } from "../controllers/postController.js";
 
 const router = express.Router();
@@ -19,5 +20,6 @@ router.get("/", auth, getPosts);
 router.get("/:id", auth, checkObjectIDValidator, getPostByID);
 router.delete("/:id", auth, checkObjectIDValidator, deletePostByID);
 router.put("/like/:id", auth, checkObjectIDValidator, likePost);
+router.put("/unlike/:id", auth, checkObjectIDValidator, unlikePost);
 
 export default router;
