@@ -40,7 +40,7 @@ const Register = () => {
         console.log(res.data);
         setFormData({ name: "", email: "", password: "", confirmPassword: "" });
       } catch (error) {
-        console.log(error.response.data);
+        console.log(error.response.data.msg);
       }
     }
   };

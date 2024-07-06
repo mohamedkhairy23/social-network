@@ -33,7 +33,7 @@ const Login = () => {
       console.log(res.data);
       setFormData({ email: "", password: "" });
     } catch (error) {
-      console.log(error.response.data);
+      console.log(error.response.data.msg);
     }
   };
 
