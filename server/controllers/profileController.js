@@ -273,7 +273,7 @@ const deleteProfileEducation = asyncHandler(async (req, res) => {
 const GetUserReposByUsername = asyncHandler(async (req, res) => {
   try {
     const options = {
-      uri: `https://api.github.com/users/${req.params.username}/repos?per_page=5&sort=created:asc&client_id=${process.env.GITHUB_CLIENT_ID}&client_secret=${process.env.GITHUB_CLIENT_SECRET}`,
+      uri: `https://api.github.com/users/${req.params.username}/repos?sort=created:asc&client_id=${process.env.GITHUB_CLIENT_ID}&client_secret=${process.env.GITHUB_CLIENT_SECRET}`,
       method: "GET",
       headers: { "user-agent": "node.js" },
     };
