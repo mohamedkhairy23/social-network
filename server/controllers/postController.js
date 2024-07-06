@@ -26,4 +26,46 @@ const createPost = asyncHandler(async (req, res) => {
   }
 });
 
-export { createPost };
+// @desc     GET get all posts
+// @route    GET /api/posts
+// @access   Private
+const getPosts = asyncHandler(async (req, res) => {
+  try {
+    const searchQuery = req.query.search || "";
+    const page = parseInt(req.query.page) || 1;
+
+    let query = {};
+
+    if (searchQuery) {
+      const searchRegex = new RegExp(searchQuery, "i");
+      query = { text: searchRegex };
+    }
+
+    const pageSize = 10;
+    const skip = (page - 1) * pageSize;
+
+    const posts = await Post.find(query)
+      .populate("user", "name avatar")
+      .skip(skip)
+      .limit(pageSize)
+      .lean();
+
+    const total = await Post.countDocuments(query);
+
+    const response = {
+      pagination: {
+        total,
+        page,
+        pages: Math.ceil(total / pageSize),
+      },
+      data: posts,
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+export { createPost, getPosts };
