@@ -130,6 +130,7 @@ const likePost = asyncHandler(async (req, res) => {
       return res.status(400).json({ msg: "Post already liked" });
     }
 
+    // pushing logged in user like
     post.likes.unshift({ user: req.user.id });
 
     await post.save();
@@ -166,6 +167,99 @@ const unlikePost = asyncHandler(async (req, res) => {
   }
 });
 
+// @desc     POST Comment on a post
+// @route    POST /api/posts/comment/:id
+// @access   Private
+const addCommentToPost = asyncHandler(async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select("-password");
+
+    const post = await Post.findById(req.params.id);
+
+    const newComment = {
+      text: req.body.text,
+      name: user.name,
+      avatar: user.avatar,
+      user: req.user.id,
+    };
+
+    post.comments.unshift(newComment);
+
+    await post.save();
+
+    res.status(200).json(post.comments);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+// @desc     DELETE delete comment by post ID and comment ID
+// @route    DELETE /api/posts/comment/:id/:comment_id
+// @access   Private
+const deleteComment = asyncHandler(async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+
+    const comment = post.comments.find(
+      (comment) => comment.id === req.params.comment_id
+    );
+
+    if (!comment) {
+      return res.status(404).json({ msg: "Comment doesn't exist" });
+    }
+
+    // check if logged in user is the owner of a comment
+    if (comment.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: "Unauthorized" });
+    }
+
+    post.comments = post.comments.filter(
+      (comment) => comment.id !== req.params.comment_id
+    );
+
+    await post.save();
+
+    return res.json(post.comments);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
+// @desc     PUT update comment by post ID and comment ID
+// @route    PUT /api/posts/comment/:id/:comment_id
+// @access   Private
+const updateComment = asyncHandler(async (req, res) => {
+  try {
+    const { text } = req.body;
+
+    const post = await Post.findById(req.params.id);
+
+    const comment = post.comments.find(
+      (comment) => comment.id === req.params.comment_id
+    );
+
+    if (!comment) {
+      return res.status(404).json({ msg: "Comment doesn't exist" });
+    }
+
+    // check if logged in user is the owner of a comment
+    if (comment.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: "Unauthorized" });
+    }
+
+    comment.text = text;
+
+    await post.save();
+
+    return res.json(post.comments);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+});
+
 export {
   createPost,
   getPosts,
@@ -173,4 +267,7 @@ export {
   deletePostByID,
   likePost,
   unlikePost,
+  addCommentToPost,
+  deleteComment,
+  updateComment,
 };

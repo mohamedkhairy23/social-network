@@ -11,4 +11,21 @@ const createPostValidator = [
   validatorMiddleware,
 ];
 
-export { createPostValidator, checkObjectIDValidator };
+const addCommentToPostValidator = [
+  check("id").isMongoId().withMessage("Invalid user id format"),
+  check("text", "Text is required").not().isEmpty(),
+  validatorMiddleware,
+];
+
+const updateOrDeleteCommentValidator = [
+  check("id").isMongoId().withMessage("Invalid user id format"),
+  check("comment_id").isMongoId().withMessage("Invalid user id format"),
+  validatorMiddleware,
+];
+
+export {
+  createPostValidator,
+  checkObjectIDValidator,
+  addCommentToPostValidator,
+  updateOrDeleteCommentValidator,
+};
